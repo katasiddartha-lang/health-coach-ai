@@ -380,10 +380,9 @@ async def get_user_reports(user_id: str):
 @api_router.post("/daily-logs", response_model=DailyLog)
 async def create_daily_log(log_input: DailyLogCreate):
     """Create daily food and activity log"""
-    log = DailyLog(
-        **log_input.dict(),
-        log_date=datetime.strptime(log_input.log_date, "%Y-%m-%d").date()
-    )
+    log_dict = log_input.dict()
+    log_dict['log_date'] = datetime.strptime(log_input.log_date, "%Y-%m-%d").date()
+    log = DailyLog(**log_dict)
     await db.daily_logs.insert_one(log.dict())
     return log
 
