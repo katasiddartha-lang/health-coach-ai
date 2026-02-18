@@ -225,7 +225,10 @@ def generate_adaptive_workout_plan(user_id: str, daily_logs: List[Dict], hf_api_
         exercises = get_workout_exercises_from_wger(limit=15)
         exercises_text = "\n".join([f"- {ex['name']}: {ex.get('description', 'No description')[:100]}" for ex in exercises])
         
-        prompt = f"""You are a fitness coach AI. Based on the user's recent activity logs, create a personalized workout plan for tomorrow.
+        messages = [
+            {
+                "role": "user",
+                "content": f"""You are a fitness coach AI. Based on the user's recent activity logs, create a personalized workout plan for tomorrow.
 
 Recent Activity (last 7 days):
 {chr(10).join(logs_summary)}
@@ -254,19 +257,23 @@ Format your response as:
 ### Tips:
 [Additional tips based on their recent activity]
 """
+            }
+        ]
         
         client = InferenceClient(token=hf_api_key)
-        response = client.text_generation(
-            prompt,
-            model="mistralai/Mistral-7B-Instruct-v0.2",
-            max_new_tokens=800,
+        response = client.chat_completion(
+            messages=messages,
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
+            max_tokens=800,
             temperature=0.8
         )
         
+        recommendations_text = response.choices[0].message.content
+        
         return {
-            "recommendations": response,
+            "recommendations": recommendations_text,
             "exercises": exercises[:7],  # Return some exercises for display
-            "model_used": "mistralai/Mistral-7B-Instruct-v0.2"
+            "model_used": "meta-llama/Meta-Llama-3-8B-Instruct"
         }
     except Exception as e:
         logger.error(f"Workout plan generation failed: {str(e)}")
