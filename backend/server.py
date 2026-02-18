@@ -98,7 +98,7 @@ class DailyLogCreate(BaseModel):
 class WorkoutPlan(BaseModel):
     plan_id: str = Field(default_factory=lambda: str(datetime.now().timestamp()))
     user_id: str
-    plan_date: date
+    plan_date: str  # Changed from date to str for MongoDB compatibility
     exercises: List[Dict[str, Any]]
     recommendations: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
