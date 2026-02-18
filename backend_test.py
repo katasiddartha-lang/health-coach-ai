@@ -357,13 +357,34 @@ class BackendTestSuite:
                 "error": "No test user ID available"
             }
         
-        # Test without HF API key - should return proper error or fallback
+        # Test with form data as expected by the endpoint
         data = {
             "user_id": self.test_user_id,
             "hf_api_key": "invalid_key"
         }
         
-        result = self.test_api_endpoint("POST", "/workout-plans/generate", data)
+        # Use form data instead of JSON
+        try:
+            url = f"{BASE_URL}/workout-plans/generate"
+            response = requests.post(url, data=data, timeout=60)
+            
+            result = {
+                "success": response.status_code in [200, 201],
+                "status_code": response.status_code,
+                "response_time": response.elapsed.total_seconds()
+            }
+            
+            try:
+                result["data"] = response.json()
+            except:
+                result["data"] = {"text": response.text}
+                
+        except Exception as e:
+            result = {
+                "success": False,
+                "error": f"Request error: {str(e)}",
+                "status_code": None
+            }
         
         if result["success"]:
             plan_data = result["data"]
