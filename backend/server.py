@@ -78,7 +78,7 @@ class HealthReportResponse(BaseModel):
 class DailyLog(BaseModel):
     log_id: str = Field(default_factory=lambda: str(datetime.now().timestamp()))
     user_id: str
-    log_date: date
+    log_date: str  # Changed from date to str for MongoDB compatibility
     breakfast: Dict[str, Any]
     lunch: Dict[str, Any]
     dinner: Dict[str, Any]
