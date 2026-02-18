@@ -416,10 +416,10 @@ async def generate_workout_plan(user_id: str = Form(...), hf_api_key: str = Form
         # Generate plan
         plan_data = generate_adaptive_workout_plan(user_id, logs, hf_api_key)
         
-        # Create workout plan
+        # Create workout plan with string date
         plan = WorkoutPlan(
             user_id=user_id,
-            plan_date=date.today(),
+            plan_date=datetime.now().strftime("%Y-%m-%d"),
             exercises=plan_data['exercises'],
             recommendations=plan_data['recommendations']
         )
