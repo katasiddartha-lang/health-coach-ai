@@ -107,15 +107,18 @@ user_problem_statement: "AI-powered personal health coach mobile app where users
 backend:
   - task: "User Registration API"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created POST /api/users endpoint with MongoDB storage. Accepts name, email, age, gender, height, weight."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: User registration API working correctly. Creates users with unique IDs, stores in MongoDB, and returns complete user data. Tested with realistic data."
   
   - task: "PDF Upload with OCR Extraction"
     implemented: true
