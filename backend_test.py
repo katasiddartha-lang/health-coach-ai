@@ -191,15 +191,18 @@ class BackendTestSuite:
                 "error": "No test user ID available"
             }
         
-        # Create a simple test file to simulate PDF upload
-        test_pdf_content = self.create_test_pdf_base64()
-        test_file = io.BytesIO(base64.b64decode(test_pdf_content))
-        test_file.name = "test_health_report.pdf"
+        # Create a simple test PDF content (base64)
+        test_pdf_content = """JVBERi0xLjQKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPD4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIgNzkyXQovUmVzb3VyY2VzIDQgMCBSCi9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKNCAwIG9iago8PAovRm9udCA2IDAgUgo+PgplbmRvYmoKNSAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNzIgNzIwIFRkCihIZWFsdGggUmVwb3J0IFRlc3QpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKNiAwIG9iago8PAovRjEgPDwKL1R5cGUgL0ZvbnQKL1N1YnR5cGUgL1R5cGUxCi9CYXNlRm9udCAvSGVsdmV0aWNhCj4+Cj4+CmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTAgMDAwMDAgbiAKMDAwMDAwMDA1MyAwMDAwMCBuIAowMDAwMDAwMTI1IDAwMDAwIG4gCjAwMDAwMDAyMzAgMDAwMDAgbiAKMDAwMDAwMDI2MyAwMDAwMCBuIAowMDAwMDAwMzU0IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNwovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDUzCiUlRU9G"""
+        
+        # Create a proper file object
+        import io
+        import base64
+        test_file_bytes = base64.b64decode(test_pdf_content)
         
         files = {
-            "file": ("test_health_report.pdf", test_file, "application/pdf")
+            'file': ('test_health_report.pdf', io.BytesIO(test_file_bytes), 'application/pdf')
         }
-        data = {"user_id": self.test_user_id}
+        data = {'user_id': self.test_user_id}
         
         result = self.test_api_endpoint("POST", "/health-reports/upload", data=data, files=files)
         
