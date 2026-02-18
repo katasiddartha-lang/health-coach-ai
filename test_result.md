@@ -122,15 +122,18 @@ backend:
   
   - task: "PDF Upload with OCR Extraction"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created POST /api/health-reports/upload endpoint using pytesseract OCR and pdf2image. Converts PDF to base64, extracts text via OCR."
+      - working: false
+        agent: "testing"
+        comment: "❌ FAILED: PDF upload with OCR failing. Error: 'Unable to get page count' - pdf2image/pytesseract having issues with PDF parsing. OCR functionality needs debugging. Minor: Endpoint accepts uploads but OCR processing fails."
   
   - task: "AI Health Report Analysis"
     implemented: true
