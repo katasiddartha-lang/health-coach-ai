@@ -143,10 +143,13 @@ def extract_text_from_pdf_base64(pdf_base64: str) -> str:
 def analyze_health_report_with_ai(extracted_text: str, hf_api_key: str) -> Dict[str, Any]:
     """Analyze health report using Hugging Face free models"""
     try:
-        # Use Hugging Face Inference API with free models
+        # Use Hugging Face Inference API with chat completion endpoint
         client = InferenceClient(token=hf_api_key)
         
-        prompt = f"""You are a health analysis AI. Analyze the following lab report and provide:
+        messages = [
+            {
+                "role": "user",
+                "content": f"""You are a health analysis AI. Analyze the following lab report and provide:
 1. A summary of all health parameters found
 2. Identify which parameters are normal, high, or low
 3. Provide health recommendations based on the results
@@ -164,18 +167,22 @@ Please provide a detailed analysis in the following format:
 ### Recommendations:
 [Provide specific health and lifestyle recommendations]
 """
+            }
+        ]
         
-        # Using Mistral-7B or similar free model
-        response = client.text_generation(
-            prompt,
-            model="mistralai/Mistral-7B-Instruct-v0.2",
-            max_new_tokens=1000,
+        # Using Meta-Llama-3-8B-Instruct with chat_completion
+        response = client.chat_completion(
+            messages=messages,
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
+            max_tokens=1000,
             temperature=0.7
         )
         
+        analysis_text = response.choices[0].message.content
+        
         return {
-            "analysis": response,
-            "model_used": "mistralai/Mistral-7B-Instruct-v0.2"
+            "analysis": analysis_text,
+            "model_used": "meta-llama/Meta-Llama-3-8B-Instruct"
         }
     except Exception as e:
         logger.error(f"AI analysis failed: {str(e)}")
